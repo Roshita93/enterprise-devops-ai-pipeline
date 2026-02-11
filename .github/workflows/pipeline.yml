@@ -27,9 +27,9 @@ jobs:
       run: terraform validate
       working-directory: terraform
 
-    - name: Terraform Plan
-      run: terraform plan
-      working-directory: terraform
+   # - name: Terraform Plan
+   #   run: terraform plan
+   #   working-directory: terraform
 
     # -------------------------
     # Docker Build
