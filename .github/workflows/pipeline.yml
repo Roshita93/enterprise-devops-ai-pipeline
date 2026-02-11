@@ -1,0 +1,52 @@
+name: Enterprise DevOps AI Pipeline
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  devops-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    # -------------------------
+    # Terraform Validation
+    # -------------------------
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+
+    - name: Terraform Init
+      run: terraform init
+      working-directory: terraform
+
+    - name: Terraform Validate
+      run: terraform validate
+      working-directory: terraform
+
+    - name: Terraform Plan
+      run: terraform plan
+      working-directory: terraform
+
+    # -------------------------
+    # Docker Build
+    # -------------------------
+    - name: Build Docker Image
+      run: docker build -t devops-ai-app .
+
+    # -------------------------
+    # Security Scan (Trivy)
+    # -------------------------
+    - name: Run Trivy Scan
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: devops-ai-app
+
+    # -------------------------
+    # AI Review Step
+    # -------------------------
+    - name: AI Review
+      run: python scripts/ai_review.py
